@@ -22,4 +22,5 @@ public:
 	void dealThree();
 	void printBoard();
 	void printDeck();
+	int handle(std::string command);
 };

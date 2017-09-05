@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <iostream>
 
 int main()
 {
@@ -8,26 +9,21 @@ int main()
 	myBoard.setBoard();
 	myBoard.printBoard();
 
-	for (int i = 0; i < 50; i++)
-	{
-		myBoard.dealThree();
-		myBoard.printBoard();
-	}
+	std::string command;
 
-	/////////////////////////
-	//
-	// Fix this ^
-	//
-	// If three cards (AC, 2D,
-	// 3H) are dealt, they 
-	// will be flipped by the
-	// time they next come
-	// around (3H, 2D, AC).
-	//
-	// Happens to every 
-	// dealt triplet.
-	//
-	/////////////////////////
+	while (true)
+	{
+		std::cin >> command;
+		std::transform(command.begin(), command.end(), command.begin(), toupper);
+
+		if (command == "EXIT")
+			return 0;
+		else
+		{
+			myBoard.handle(command);
+			myBoard.printBoard();
+		}
+	}
 
 	return 0;
 }

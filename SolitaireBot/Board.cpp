@@ -69,12 +69,20 @@ void Board::dealThree()
 	}
 
 	int cardsDealt = 0;
+	std::stack<Card> tempHand;
 
 	// While there are cards left in the hand, and less than three cards have been drawn
 	while (cardsDealt < 3 && deck.getSize() != 0)
 	{
-		hand.push(deck.dealCard());	// Push cards from the deck into the hand
+		tempHand.push(deck.dealCard());	// Push cards from the deck into the hand
+
 		cardsDealt++;				// Increment the amount of cards dealt
+	}
+
+	for (int i = 0; i < cardsDealt; i++)
+	{
+		hand.push(tempHand.top());
+		tempHand.pop();
 	}
 
 }
@@ -228,3 +236,16 @@ void Board::printDeck()
 	}
 }
 
+int Board::handle(std::string command)
+{
+	if (command == "DRAW")
+	{
+		dealThree();
+		return 0;
+	}
+	else if (command == "NEWGAME")
+	{
+		clearBoard();
+		setBoard();
+	}
+}
