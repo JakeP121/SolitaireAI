@@ -9,21 +9,45 @@ int main()
 	myBoard.setBoard();
 	myBoard.printBoard();
 
-	std::string command;
+	char command[20];
 
 	while (true)
 	{
-		std::cin >> command;
-		std::transform(command.begin(), command.end(), command.begin(), toupper);
+		std::cin.getline(command, sizeof(command));
+
+		for (int i = 0; i < sizeof(command); i++)
+			command[i] = toupper(command[i]);
 
 		if (command == "EXIT")
 			return 0;
+		else if (command == "")
+			std::cout << "Stopping\n";
 		else
 		{
 			myBoard.handle(command);
 			myBoard.printBoard();
 		}
 	}
+
+	/////////////////////////
+	//
+	// Fix the glitch that
+	// stops for testing 
+	// the command as a 
+	// string and not a char
+	// array.
+	//
+	// Also fix whatever tf
+	// glitch is stopping
+	// cards getting shown
+	// when boardSlots
+	// size > 7
+	//
+	/////////////////////////
+
+
+
+
 
 	return 0;
 }

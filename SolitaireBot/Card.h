@@ -8,6 +8,7 @@ private:
 	int cardNum;
 	bool hidden = false;
 	std::string colour;
+	Card* connectedCard = NULL;
 
 public:
 	Card()
@@ -20,6 +21,7 @@ public:
 	Card(std::string value, std::string suit, int cardNum);
 	std::string getValue();
 	std::string getValueAbrv();
+	int getValueNum();
 	void setValue(std::string value);
 	std::string getSuit();
 	void setSuit(std::string suit);
@@ -28,6 +30,7 @@ public:
 	void setHidden(bool hide);
 	bool isHidden();
 	std::string getColour();
-	
+	Card* getConnectedCard();
+	void setConnectedCard(Card *card);
 
 };

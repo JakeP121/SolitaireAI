@@ -118,7 +118,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
-	<ClInclude Include="Card.h" />
+    <ClInclude Include="Card.h" />
+    <ClInclude Include="DataStructs.h" />
     <ClInclude Include="Deck.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

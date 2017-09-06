@@ -59,6 +59,11 @@ std::string Card::getValueAbrv()
 	}
 }
 
+int Card::getValueNum()
+{
+	return cardNum % 13;
+}
+
 void Card::setValue(std::string value)
 {
 	this->value = value;
@@ -103,4 +108,17 @@ bool Card::isHidden()
 std::string Card::getColour()
 {
 	return colour;
+}
+
+Card* Card::getConnectedCard()
+{
+	if (connectedCard)
+		return connectedCard;
+	else
+		return nullptr;
+}
+
+void Card::setConnectedCard(Card *card)
+{
+	connectedCard = card;
 }
