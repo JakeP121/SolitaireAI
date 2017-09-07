@@ -23,11 +23,16 @@ void Board::setBoard()
 		// increment the cardsPerSlot for the next column
 		cardsPerSlot++;
 	}
+
+	boardSet = true;
 }
 
 // Clears the board and resets the deck
 void Board::clearBoard()
 {
+	if (!boardSet)
+		return;
+
 	// Clear board slots
 	for (int i = 0; i < 7; i++)
 	{
@@ -52,11 +57,16 @@ void Board::clearBoard()
 
 	// Clear the screen
 	std::system("cls");
+
+	boardSet = false;
 }
 
 // Tries to deal three cards from the deck to the hand
 void Board::dealThree()
 {
+	if (!boardSet)
+		return;
+
 	// If there is no more cards to draw
 	if (deck.getSize() == 0)
 	{
@@ -69,32 +79,31 @@ void Board::dealThree()
 	}
 
 	int cardsDealt = 0;
-	std::stack<Card> tempHand;
 
 	// While there are cards left in the hand, and less than three cards have been drawn
 	while (cardsDealt < 3 && deck.getSize() != 0)
 	{
-		tempHand.push(deck.dealCard());	// Push cards from the deck into the hand
+		hand.push(deck.dealCard());	// Push cards from the deck into the hand
 
 		cardsDealt++;				// Increment the amount of cards dealt
 	}
-
-	for (int i = 0; i < cardsDealt; i++)
-	{
-		hand.push(tempHand.top());
-		tempHand.pop();
-	}
-
 }
 
 // Prints the current board to the console
 void Board::printBoard()
 {
+	if (!boardSet)
+		return;
+
 	// Clear the screen
 	std::system("cls");
 
 	/////////////////////////////////// Draw suit slots
-	std::cout << "  ";
+	std::cout << "    ";
+	for (int i = 0; i < 4; i++)
+		std::cout << i + 7 << "\t\t  ";
+
+	std::cout << "\n  ";
 
 	for (int i = 0; i < 4; i++) // Loop through the four slots
 	{
@@ -125,7 +134,11 @@ void Board::printBoard()
 
 
 	///////////////////////////////////// Draw board slots
+	std::cout << "    ";
+	for (int i = 0; i < 7; i++)
+		std::cout << i << "\t    ";
 
+	std::cout << "\n";
 	bool finished = false;	// Gets flipped to true when all slots are drawn to stop the loop
 	int row = 0;			// The current row being drawn
 
@@ -144,7 +157,7 @@ void Board::printBoard()
 
 				
 				if (curCard.isHidden())	// If the card is hidden, draw a blank card
-					std::cout << "[   ]\t";
+					std::cout << "  [   ]\t";
 				else					// Else, if the card is not hidden
 				{
 					// Store the suit and value of the card
@@ -153,7 +166,7 @@ void Board::printBoard()
 
 
 					// Output
-					std::cout << "[" << value;
+					std::cout << "  [" << value;
 					
 					// Draw an extra space if value is double digit
 					if (value != "10")
@@ -187,7 +200,7 @@ void Board::printBoard()
 	if (hand.size() == 0) // If there is no hand, end prematurely
 		return;
 	else
-		std::cout << "\t";
+		std::cout << "\t11: ";
 	std::vector<Card> visibleHand;
 
 	// Store the size of the hand, but cap it at three (only the top 3 cards should be drawn)
@@ -205,7 +218,7 @@ void Board::printBoard()
 	int count = 1;
 
 	// Loop through visible hand
-	for (std::vector<Card>::iterator iter = visibleHand.begin(); iter != visibleHand.end(); iter++)
+	for (std::vector<Card>::reverse_iterator iter = visibleHand.rbegin(); iter != visibleHand.rend(); iter++)
 	{
 		// Get the card and store its suit and value
 		Card curCard = *iter;
@@ -255,39 +268,95 @@ int Board::handle(std::string command)
 	else if (command == "NEWGAME")
 	{
 		clearBoard();
+		deck.shuffleDeck(50);
 		setBoard();
 		return 0;
 	}
 	else if (command[0] == 'M' && command[1] == 'O' && command[2] == 'V' && command[3] == 'E')
 	{
-		// MOVE 01 02 03
-		// 0123456789123
-
 		// Erase 'MOVE '
 		command.erase(0, 5);
 
 		// Store the column value and delete it from command
-		std::string strCol = command.substr(0, command.find_first_of(' '));
-		command.erase(0, strCol.length() + 1 );
+		std::string val1 = command.substr(0, command.find_first_of(' '));
+		command.erase(0, val1.length() + 1);
+
+		// If the command only contained one value, call first variation of move()
+		if (command.empty())
+			return move(std::stoi(val1));
 
 		// Store the row value and delete it from command
-		std::string strRow = command.substr(0, command.find_first_of(' '));
-		command.erase(0, strRow.length() + 1);
+		std::string val2 = command.substr(0, command.find_first_of(' '));
+		command.erase(0, val2.length() + 1);
+
+		// If the command contained two values, call the second variation of move()
+		if (command.empty())
+			return move(std::stoi(val1), std::stoi(val2));
 
 		// Store the destination
-		std::string strDes = command;
+		std::string val3 = command;
 
 		// Create the point to move
 		point movCard;
-		movCard.x = std::stoi(strCol);
-		movCard.y = std::stoi(strRow);
+		movCard.x = std::stoi(val1);
+		movCard.y = std::stoi(val2);
 
-		move(movCard, std::stoi(strDes));
+		move(movCard, std::stoi(val3));
 	}
 	else
 	{
 		return 1;
 	}
+}
+
+int Board::move(int column)
+{
+	point cardPos;
+	cardPos.x = column;
+
+	// Find what row the card is in
+	if (column <= 6)
+		cardPos.y = boardSlots[column].size() - 1;
+	else if (column <= 10)
+		cardPos.y = suitSlots[column - 7].size() - 1;
+	else
+		cardPos.y = hand.size() - 1;
+
+	std::vector<Card> movingColumn;
+	Card movingCard;
+
+	if (!canMove(cardPos, movingColumn, movingCard))
+		return 1;
+
+	for (int i = 7; i < 11; i++)
+	{
+		// If move(point, int) finishes with no errors, end early with no errors
+		if (move(cardPos, i) == 0)
+			return 0;
+	}
+
+	for (int i = 0; i < 7; i++)
+	{
+		// If move(point, int) finishes with no errors, end early with no errors
+		if (move(cardPos, i) == 0)
+			return 0;
+	}
+}
+
+int Board::move(int column, int destination)
+{
+	point cardPos;
+	cardPos.x = column;
+
+	// Find what row the card is in
+	if (column <= 6)
+		cardPos.y = boardSlots[column].size() - 1;
+	else if (column <= 10)
+		cardPos.y = suitSlots[column - 7].size() - 1;
+	else
+		cardPos.y = hand.size() - 1;
+
+	return move(cardPos, destination);
 }
 
 int Board::move(point card, int destination)
@@ -315,57 +384,8 @@ int Board::move(point card, int destination)
 	Card movingCard;
 
 	////////////////////////////////////////////////////////////////////////////////////////// Check if card is locked
-	if (column <= 6)	// If the card is in a board slot
-	{
-		std::vector<Card>::iterator iter = boardSlots[column].begin();
-		std::advance(iter, row);
-		movingCard = *iter;
-
-		if (movingCard.isHidden())	// If the card is hidden, end early
-			return 1;
-
-		movingColumn.push_back(movingCard);
-
-		// If there is a card connected
-		if (movingCard.getConnectedCard() != nullptr)
-		{
-			bool endOfChain = false;
-			Card* currentCard = &movingCard;
-
-			do
-			{
-				Card *lockingCard = currentCard->getConnectedCard();
-
-				// If there is a card locking in the current card
-				if (lockingCard != nullptr)
-				{
-					// If the locking card is an opposite colour AND one value less than the current card
-					if ((lockingCard->getColour() != currentCard->getColour()) && (lockingCard->getValueNum() == currentCard->getValueNum() - 1))
-					{
-						// Move down the chain
-						currentCard = lockingCard;
-						movingColumn.push_back(*currentCard);
-					}
-					else
-					{
-						// Card is locked, can't move
-						return 1;
-					}
-				}
-				else
-					endOfChain = true;
-
-			} while (!endOfChain);
-		}
-	}
-	else if (column >= 7)	// If column isn't a board slot, always take the top card
-	{
-		if (column == 11)
-			movingCard = hand.top();
-		else
-			movingCard = suitSlots[column - 7].top();
-	}
-
+	if (!canMove(card, movingColumn, movingCard))
+		return 1;
 
 
 	////////////////////////////////////////////////////////////////////////////////////////// Check if destination is valid
@@ -418,8 +438,28 @@ int Board::move(point card, int destination)
 
 	////////////////////////////////////////////////////////////////////////////////////////// If both alright, move it
 	if (destination <= 6) // Moving to board slot
+	{
+		// Remember target's row
+		int targetRow = boardSlots[destination].size() - 1;
+
+		// Test if slot is empty before move
+		bool movingToEmpty = boardSlots[destination].empty();
+
 		// Append movingColumn to end of destination vector
 		boardSlots[destination].insert(boardSlots[destination].end(), movingColumn.begin(), movingColumn.end());
+
+		if (!movingToEmpty)
+		{
+			// Move an iterator to the target card
+			std::vector<Card>::iterator targetIter = boardSlots[destination].begin();
+			std::advance(targetIter, targetRow);
+			std::vector<Card>::iterator newIter = boardSlots[destination].begin();
+			std::advance(newIter, targetRow + 1);
+
+
+			targetIter->setConnectedCard(&*newIter);
+		}
+	}
 	else // moving to suit slot
 		suitSlots[destination - 7].push(movingCard);
 
@@ -428,11 +468,17 @@ int Board::move(point card, int destination)
 		for (int i = 0; i < movingColumn.size(); i++)
 			boardSlots[column].pop_back();
 
-		std::vector<Card>::reverse_iterator iter = boardSlots[column].rbegin();
-		Card &newCard = *iter;
+		// If the old column is not empty, turn the last card around
+		if (!boardSlots[column].empty())
+		{
+			std::vector<Card>::reverse_iterator iter = boardSlots[column].rbegin();
+			
+			if(iter->isHidden())
+				iter->setHidden(false);
 
-		if (newCard.isHidden())
-			newCard.setHidden(false);
+				if (iter->getConnectedCard() != NULL)
+					iter->setConnectedCard(NULL);
+		}
 	}
 	else if (column <= 10)
 	{
@@ -443,4 +489,70 @@ int Board::move(point card, int destination)
 
 
 	return 0;
+}
+
+bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCard)
+{
+	int column = card.x;
+	int row = card.y;
+
+	if (column <= 6)	// If the card is in a board slot
+	{
+		std::vector<Card>::iterator iter = boardSlots[column].begin();
+		std::advance(iter, row);
+		movingCard = *iter;
+
+		if (movingCard.isHidden())	// If the card is hidden, end early
+			return false;
+
+		movingColumn.push_back(movingCard);
+
+		// If there is a card connected
+		if (movingCard.getConnectedCard() != NULL)
+		{
+			bool endOfChain = false;
+			Card* currentCard = &movingCard;
+
+			do
+			{
+				Card *lockingCard = currentCard->getConnectedCard();
+
+				// If there is a card locking in the current card
+				if (lockingCard != nullptr)
+				{
+					// If the locking card is an opposite colour AND one value less than the current card
+					if ((lockingCard->getColour() != currentCard->getColour()) && (lockingCard->getValueNum() == currentCard->getValueNum() - 1))
+					{
+						// Move down the chain
+						currentCard = lockingCard;
+						movingColumn.push_back(*currentCard);
+					}
+					else
+					{
+						// Card is locked, can't move
+						return false;
+					}
+				}
+				else
+					endOfChain = true;
+
+			} while (!endOfChain);
+		}
+	}
+	else if (column >= 7)	// If column isn't a board slot, always take the top card
+	{
+		if (column == 11)
+		{
+			movingCard = hand.top();
+			movingColumn.push_back(movingCard);
+		}
+		else
+		{
+			movingCard = suitSlots[column - 7].top();
+			movingColumn.push_back(movingCard);
+		}
+	}
+
+	// Card can move
+	return true;
 }

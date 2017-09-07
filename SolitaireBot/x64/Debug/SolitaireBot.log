@@ -1,8 +1,18 @@
-﻿  Source.cpp
+﻿  Board.cpp
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(207): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(319): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(321): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(323): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(353): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(355): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(357): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(443): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(310): warning C4715: 'Board::handle': not all control paths return a value
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(344): warning C4715: 'Board::move': not all control paths return a value
   Skipping... (no relevant changes detected)
+  Source.cpp
   Deck.cpp
   Card.cpp
-  Board.cpp
   SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.exe
   SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.pdb (Partial PDB)

@@ -2,6 +2,7 @@
 #include <ctime>
 Deck::Deck()
 {
+	srand(time(NULL));
 	createDeck();
 }
 
@@ -43,7 +44,6 @@ void Deck::shuffleDeck(int rounds)
 {	
 	while (rounds > 0)
 	{
-		srand(time(NULL));
 		for (std::vector<Card>::iterator iter = cards.begin(); iter != cards.end(); iter++)
 		{
 			// Get a random card from the deck

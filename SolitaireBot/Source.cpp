@@ -5,43 +5,38 @@ int main()
 {
 	Board myBoard;
 
-	myBoard.deck.shuffleDeck(50);
-	myBoard.setBoard();
-	myBoard.printBoard();
+	char input[20];
 
-	char command[20];
+	myBoard.handle("NEWGAME");
+	myBoard.handle("DRAW");
+	myBoard.printBoard();
 
 	while (true)
 	{
-		std::cin.getline(command, sizeof(command));
+		std::cin.getline(input, sizeof(input));
 
-		for (int i = 0; i < sizeof(command); i++)
-			command[i] = toupper(command[i]);
+		for (int i = 0; i < sizeof(input); i++)
+			input[i] = toupper(input[i]);
+
+		std::string command = input;
 
 		if (command == "EXIT")
 			return 0;
-		else if (command == "")
+		else if (command == "BREAK")
 			std::cout << "Stopping\n";
 		else
 		{
 			myBoard.handle(command);
+			system("cls");
 			myBoard.printBoard();
 		}
 	}
 
 	/////////////////////////
 	//
-	// Fix the glitch that
-	// stops for testing 
-	// the command as a 
-	// string and not a char
-	// array.
-	//
-	// Also fix whatever tf
-	// glitch is stopping
-	// cards getting shown
-	// when boardSlots
-	// size > 7
+	// Crashes when moving
+	// an entire column,
+	// leaving an empty one.
 	//
 	/////////////////////////
 
