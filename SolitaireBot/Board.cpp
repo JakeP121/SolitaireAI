@@ -313,14 +313,36 @@ int Board::move(int column)
 {
 	point cardPos;
 	cardPos.x = column;
+	cardPos.y = -1;
+	
+	// Return early if the column is empty
+	if (column <= 6 && boardSlots[column].empty())
+		return 1;
+	else if ((column >= 7 && column <= 10) && suitSlots[column - 7].empty())
+		return 1;
+	else if (column == 11 && hand.empty())
+		return 1;
 
-	// Find what row the card is in
-	if (column <= 6)
-		cardPos.y = boardSlots[column].size() - 1;
-	else if (column <= 10)
-		cardPos.y = suitSlots[column - 7].size() - 1;
-	else
-		cardPos.y = hand.size() - 1;
+
+	std::vector<Card>::reverse_iterator testCard = boardSlots[column].rbegin();
+	testCard++;
+	std::vector<Card>::reverse_iterator topOfCurrentChain = boardSlots[column].rbegin();
+	int row = boardSlots[column].size() - 1;
+	
+		do {
+			// If the card we are testing isn't hidden and either has no connected card (must be top of pile) or is connected to the card we definitely want to move
+			if (!testCard->isHidden() && (testCard->getConnectedCard() == NULL || testCard->getConnectedCard() == &*topOfCurrentChain))
+			{
+				testCard++;
+				topOfCurrentChain++;
+				row--;
+			}
+			else
+			{
+				cardPos.y = row;
+			}
+		} while (cardPos.y == -1);
+
 
 	std::vector<Card> movingColumn;
 	Card movingCard;
@@ -347,6 +369,16 @@ int Board::move(int column, int destination)
 {
 	point cardPos;
 	cardPos.x = column;
+
+	// Find what row the card is in or return early if the card is invalid
+	if (column <= 6 && !boardSlots[column].empty())
+		cardPos.y = boardSlots[column].size() - 1;
+	else if (column <= 10 && !suitSlots[column].empty())
+		cardPos.y = suitSlots[column - 7].size() - 1;
+	else if (column == 11 && !hand.empty())
+		cardPos.y = hand.size() - 1;
+	else
+		return 1;
 
 	// Find what row the card is in
 	if (column <= 6)
@@ -498,6 +530,10 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 
 	if (column <= 6)	// If the card is in a board slot
 	{
+		// End early if the slot is empty
+		if (boardSlots[column].empty())
+			return false;
+
 		std::vector<Card>::iterator iter = boardSlots[column].begin();
 		std::advance(iter, row);
 		movingCard = *iter;
@@ -539,19 +575,26 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 			} while (!endOfChain);
 		}
 	}
-	else if (column >= 7)	// If column isn't a board slot, always take the top card
+	else if (column <= 10)	// If column isn't a board slot, always take the top card
 	{
-		if (column == 11)
-		{
-			movingCard = hand.top();
-			movingColumn.push_back(movingCard);
-		}
-		else
-		{
-			movingCard = suitSlots[column - 7].top();
-			movingColumn.push_back(movingCard);
-		}
+		// Check the suit slot isn't empty
+		if (suitSlots[column - 7].empty())
+			return false;
+
+		movingCard = suitSlots[column - 7].top();
+		movingColumn.push_back(movingCard);
 	}
+	else if (column == 11)
+	{
+		// Check the hand isn't empty
+		if (hand.empty())
+			return false;
+
+		movingCard = hand.top();
+		movingColumn.push_back(movingCard);
+	}
+	else
+		return false;
 
 	// Card can move
 	return true;

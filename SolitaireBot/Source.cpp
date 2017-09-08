@@ -34,9 +34,10 @@ int main()
 
 	/////////////////////////
 	//
-	// Crashes when moving
-	// an entire column,
-	// leaving an empty one.
+	// I broke it again.
+	//
+	// 
+	// Blame Christie.
 	//
 	/////////////////////////
 
