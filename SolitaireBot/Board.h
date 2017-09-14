@@ -6,14 +6,18 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <fstream>
 
 class Board
 {
-
+private:
+	std::ofstream logFile;
+	void antiGarbage();
 
 public:
 	Deck deck;
 	Board();
+	~Board();
 	void setBoard();
 	void clearBoard();
 	void dealThree();

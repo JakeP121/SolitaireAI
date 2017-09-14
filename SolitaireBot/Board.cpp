@@ -3,6 +3,12 @@
 Board::Board()
 {
 	// Constructor empty
+	logFile.open("log.txt");
+}
+
+Board::~Board()
+{
+	logFile.close();
 }
 
 // Sets the board with fresh cards
@@ -54,6 +60,9 @@ void Board::clearBoard()
 
 	// Create a new, ordered deck
 	deck.sortDeck();
+
+	logFile.close();
+	logFile.open("log.txt");
 
 	// Clear the screen
 	std::system("cls");
@@ -277,6 +286,10 @@ int Board::handle(std::string command)
 		// Erase 'MOVE '
 		command.erase(0, 5);
 
+		// If the command is empty, return early
+		if (command.empty())
+			return 1;
+
 		// Store the column value and delete it from command
 		std::string val1 = command.substr(0, command.find_first_of(' '));
 		command.erase(0, val1.length() + 1);
@@ -291,9 +304,8 @@ int Board::handle(std::string command)
 
 		// If the command contained two values, call the second variation of move()
 		if (command.empty())
-		{
 			return move(std::stoi(val1), std::stoi(val2));
-		}
+
 		// Store the destination
 		std::string val3 = command;
 
@@ -305,9 +317,7 @@ int Board::handle(std::string command)
 		move(movCard, std::stoi(val3));
 	}
 	else
-	{
 		return 1;
-	}
 }
 
 int Board::move(int column)
@@ -377,7 +387,7 @@ int Board::move(int column)
 
 		cardPos.y++;
 
-	} while (column <= 6 && cardPos.y < suitSlots[column].size());
+	} while (column <= 6 && cardPos.y < boardSlots[column].size());
 }
 
 int Board::move(int column, int destination)
@@ -408,6 +418,8 @@ int Board::move(int column, int destination)
 
 int Board::move(point card, int destination)
 {
+	antiGarbage();
+
 	// Column 0-6 (columns), 7-10 (suit piles), 11 (hand)
 	int column = card.x;
 	int row = card.y;
@@ -476,7 +488,7 @@ int Board::move(point card, int destination)
 		{
 			// If the card is not an ace, end early
 			if (movingCard.getValue() != "ACE")
-				return 1; 
+				return 1;
 		}
 	}
 
@@ -525,6 +537,10 @@ int Board::move(point card, int destination)
 
 	if (column <= 6)
 	{
+		std::vector<Card>::iterator iter = boardSlots[column].begin();
+		std::advance(iter, card.y);
+		logFile << "Moving " << iter->getValue() << " of " << iter->getSuit() << " ";
+
 		for (int i = 0; i < movingColumn.size(); i++)
 			boardSlots[column].pop_back();
 
@@ -532,21 +548,29 @@ int Board::move(point card, int destination)
 		if (!boardSlots[column].empty())
 		{
 			std::vector<Card>::reverse_iterator iter = boardSlots[column].rbegin();
-			
-			if(iter->isHidden())
+
+			if (iter->isHidden())
 				iter->setHidden(false);
 
-				if (iter->getConnectedCard() != NULL)
-					iter->setConnectedCard(NULL);
+			if (iter->getConnectedCard() != NULL)
+				iter->setConnectedCard(NULL);
 		}
 	}
 	else if (column <= 10)
 	{
+		logFile << "Moving " << suitSlots[column - 7].top().getValue() << " of " << suitSlots[column - 7].top().getSuit() << " ";
+
 		suitSlots[column - 7].pop();
 	}
 	else
-		hand.pop();
+	{
+		logFile << "Moving " << hand.top().getValue() << " of " << hand.top().getSuit() << " ";
 
+		hand.pop();
+	}
+
+	logFile << "from [" << column << "][" << row << "] ";
+	logFile << " to column " << destination << "\n";
 
 	return 0;
 }
@@ -639,4 +663,31 @@ bool Board::checkGameComplete()
 	std::cout << "\n\n\tCongratulation!\n\n";
 	boardSet = false;
 	return true;
+}
+
+void Board::antiGarbage()
+{
+	std::vector<Card>::iterator iter;
+	std::vector<Card>::iterator iter2;
+	for (int i = 0; i < 7; i++)
+	{
+		if (!boardSlots[i].empty())
+		{
+			iter = boardSlots[i].begin();
+
+			if (boardSlots[i].size() >= 2)
+			{
+				iter2 = boardSlots[i].begin();
+				iter2++;
+				do
+				{
+					if (!iter->isHidden())
+						iter->setConnectedCard(&*iter2);
+					iter++;
+					iter2++;
+
+				} while (iter2 != boardSlots[i].end());
+			}
+		}
+	}
 }

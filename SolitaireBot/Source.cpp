@@ -23,7 +23,7 @@ int main()
 		if (command == "EXIT")
 			return 0;
 		else if (command == "BREAK")
-			std::cout << "Stopping\n";
+			myBoard.printBoard();
 		else
 		{
 			myBoard.handle(command);
