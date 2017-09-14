@@ -39,6 +39,12 @@ int main()
 	// 
 	// Blame Christie.
 	//
+	// If two or more cards are moved
+	// between columns, the locked cards
+	// still reference the old positions
+	// of cards above them, therefore 
+	// creating blank card.
+	//
 	/////////////////////////
 
 

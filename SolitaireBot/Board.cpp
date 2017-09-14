@@ -291,8 +291,9 @@ int Board::handle(std::string command)
 
 		// If the command contained two values, call the second variation of move()
 		if (command.empty())
+		{
 			return move(std::stoi(val1), std::stoi(val2));
-
+		}
 		// Store the destination
 		std::string val3 = command;
 
@@ -323,15 +324,16 @@ int Board::move(int column)
 	else if (column == 11 && hand.empty())
 		return 1;
 
+	if (column <= 6 && boardSlots[column].size() >= 2)
+	{
+		std::vector<Card>::reverse_iterator testCard = boardSlots[column].rbegin();
+		testCard++;
+		std::vector<Card>::reverse_iterator topOfCurrentChain = boardSlots[column].rbegin();
+		int row = boardSlots[column].size() - 1;
 
-	std::vector<Card>::reverse_iterator testCard = boardSlots[column].rbegin();
-	testCard++;
-	std::vector<Card>::reverse_iterator topOfCurrentChain = boardSlots[column].rbegin();
-	int row = boardSlots[column].size() - 1;
-	
 		do {
 			// If the card we are testing isn't hidden and either has no connected card (must be top of pile) or is connected to the card we definitely want to move
-			if (!testCard->isHidden() && (testCard->getConnectedCard() == NULL || testCard->getConnectedCard() == &*topOfCurrentChain))
+			if (row >= 1 && !testCard->isHidden() && (testCard->getConnectedCard() == NULL || testCard->getConnectedCard() == &*topOfCurrentChain))
 			{
 				testCard++;
 				topOfCurrentChain++;
@@ -343,26 +345,39 @@ int Board::move(int column)
 			}
 		} while (cardPos.y == -1);
 
+		if (cardPos.y == -1)
+			return 1;
+	}
+
+	if (cardPos.y == -1)
+		cardPos.y = 0;
 
 	std::vector<Card> movingColumn;
 	Card movingCard;
 
 	if (!canMove(cardPos, movingColumn, movingCard))
 		return 1;
-
-	for (int i = 7; i < 11; i++)
+	
+	do
 	{
-		// If move(point, int) finishes with no errors, end early with no errors
-		if (move(cardPos, i) == 0)
-			return 0;
-	}
 
-	for (int i = 0; i < 7; i++)
-	{
-		// If move(point, int) finishes with no errors, end early with no errors
-		if (move(cardPos, i) == 0)
-			return 0;
-	}
+		for (int i = 7; i < 11; i++)
+		{
+			// If move(point, int) finishes with no errors, end early with no errors
+			if (move(cardPos, i) == 0)
+				return 0;
+		}
+
+		for (int i = 0; i < 7; i++)
+		{
+			// If move(point, int) finishes with no errors, end early with no errors
+			if (move(cardPos, i) == 0)
+				return 0;
+		}
+
+		cardPos.y++;
+
+	} while (column <= 6 && cardPos.y < suitSlots[column].size());
 }
 
 int Board::move(int column, int destination)
@@ -482,18 +497,31 @@ int Board::move(point card, int destination)
 
 		if (!movingToEmpty)
 		{
-			// Move an iterator to the target card
 			std::vector<Card>::iterator targetIter = boardSlots[destination].begin();
 			std::advance(targetIter, targetRow);
 			std::vector<Card>::iterator newIter = boardSlots[destination].begin();
 			std::advance(newIter, targetRow + 1);
 
-
-			targetIter->setConnectedCard(&*newIter);
+			do
+			{
+				targetIter->setConnectedCard(&*newIter);
+				targetIter++;
+				newIter++;
+			} while (newIter != boardSlots[destination].end());
 		}
 	}
 	else // moving to suit slot
+	{
 		suitSlots[destination - 7].push(movingCard);
+
+		if (movingCard.getValue() == "KING")
+		{
+			checkGameComplete();
+		}
+	}
+
+
+
 
 	if (column <= 6)
 	{
@@ -597,5 +625,18 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 		return false;
 
 	// Card can move
+	return true;
+}
+
+bool Board::checkGameComplete()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		if (suitSlots[i].top().getValue() != "KING")
+			return false;
+	}
+
+	std::cout << "\n\n\tCongratulation!\n\n";
+	boardSet = false;
 	return true;
 }
