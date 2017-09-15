@@ -586,6 +586,9 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 		if (boardSlots[column].empty())
 			return false;
 
+		if (row >= boardSlots[column].size())
+			return false;
+
 		std::vector<Card>::iterator iter = boardSlots[column].begin();
 		std::advance(iter, row);
 		movingCard = *iter;
