@@ -679,6 +679,7 @@ bool Board::checkGameComplete()
 	}
 
 	std::cout << "\n\n\tCongratulation!\n\n";
+	std::cin;
 	boardSet = false;
 	return true;
 }

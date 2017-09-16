@@ -1,13 +1,17 @@
-﻿  ArtificialPlayer.cpp
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\artificialplayer.cpp(12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+﻿  Board.cpp
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(219): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(348): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(406): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(408): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(410): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(416): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(418): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(420): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(511): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-  Compiling...
-  Source.cpp
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\source.cpp(11): warning C4101: 'input': unreferenced local variable
-  Generating Code...
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(327): warning C4715: 'Board::handle': not all control paths return a value
+d:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(397): warning C4715: 'Board::move': not all control paths return a value
   Skipping... (no relevant changes detected)
-  Deck.cpp
-  Card.cpp
-  Board.cpp
-  SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.exe
-  SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.pdb (Partial PDB)
+  ArtificialPlayer.cpp
+  SolitaireBot.vcxproj -> D:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.exe
+  SolitaireBot.vcxproj -> D:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.pdb (Partial PDB)

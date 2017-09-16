@@ -214,7 +214,7 @@ std::string ArtificialPlayer::getCommand()
 	}
 
 	// If the hand is empty, draw a card
-	if (board->hand.empty())
+	if (board->hand.empty() && board->deck.getSize() > 0)
 		return "DRAW";
 
 	std::string command = think();
@@ -224,7 +224,7 @@ std::string ArtificialPlayer::getCommand()
 		drawCount = 0;
 
 	if (drawCount > 10)
-		int i = 0;
+		std::cout << "\n\n\tBoard Impossible\n\n";
 
 	return think();
 }
