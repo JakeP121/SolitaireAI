@@ -7,6 +7,7 @@ class ArtificialPlayer
 private:
 	Board *board;
 	std::string nextCommand;
+	std::string think();
 
 public:
 	ArtificialPlayer(Board *board);

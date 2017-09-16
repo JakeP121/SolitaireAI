@@ -1,20 +1,10 @@
-﻿  Board.cpp
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(216): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(342): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(400): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(402): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(404): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(410): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(412): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(414): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(502): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+﻿  ArtificialPlayer.cpp
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\artificialplayer.cpp(12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(321): warning C4715: 'Board::handle': not all control paths return a value
-e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\board.cpp(391): warning C4715: 'Board::move': not all control paths return a value
   Skipping... (no relevant changes detected)
   Source.cpp
   Deck.cpp
   Card.cpp
-  ArtificialPlayer.cpp
+  Board.cpp
   SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.exe
   SolitaireBot.vcxproj -> E:\Documents\Visual Studio 2017\Projects\Solitaire%20Bot\x64\Debug\SolitaireBot.pdb (Partial PDB)

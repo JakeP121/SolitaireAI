@@ -1,16 +1,25 @@
 #include "Board.h"
 #include <iostream>
+#include "ArtificialPlayer.h"
+#include <Windows.h>
 
 int main()
 {
 	Board myBoard;
+	ArtificialPlayer myAI(&myBoard);
 
 	char input[20];
 
-	myBoard.handle("NEWGAME");
-	myBoard.handle("DRAW");
-	myBoard.printBoard();
+	do
+	{
+		std::string command = myAI.getCommand();
+		myBoard.handle(command);
+		Sleep(100);
+	} while (myBoard.isSet());
 
+
+	
+	/*		HUMAN CONTROL
 	while (true)
 	{
 		std::cin.getline(input, sizeof(input));
@@ -31,25 +40,7 @@ int main()
 			myBoard.printBoard();
 		}
 	}
-
-	/////////////////////////
-	//
-	// I broke it again.
-	//
-	// 
-	// Blame Christie.
-	//
-	// If two or more cards are moved
-	// between columns, the locked cards
-	// still reference the old positions
-	// of cards above them, therefore 
-	// creating blank card.
-	//
-	/////////////////////////
-
-
-
-
+	*/
 
 	return 0;
 }
