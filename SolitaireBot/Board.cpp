@@ -275,7 +275,6 @@ int Board::handle(std::string command)
 	if (command == "DRAW")
 	{
 		dealThree();
-		printBoard();
 		return 0;
 	}
 	else if (command == "NEWGAME")
@@ -283,7 +282,6 @@ int Board::handle(std::string command)
 		clearBoard();
 		deck.shuffleDeck(50);
 		setBoard();
-		printBoard();
 		return 0;
 	}
 	else if (command[0] == 'M' && command[1] == 'O' && command[2] == 'V' && command[3] == 'E')
@@ -302,7 +300,6 @@ int Board::handle(std::string command)
 		// If the command only contained one value, call first variation of move()
 		if (command.empty())
 		{
-			printBoard();
 			return move(std::stoi(val1));
 		}
 		// Store the row value and delete it from command
@@ -312,7 +309,6 @@ int Board::handle(std::string command)
 		// If the command contained two values, call the second variation of move()
 		if (command.empty())
 		{
-			printBoard();
 			return move(std::stoi(val1), std::stoi(val2));
 		}
 
@@ -325,7 +321,6 @@ int Board::handle(std::string command)
 		movCard.y = std::stoi(val2);
 
 		move(movCard, std::stoi(val3));
-		printBoard();
 	}
 	else
 		return 1;
@@ -625,6 +620,7 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 
 			do
 			{
+				antiGarbage();
 				Card *lockingCard = currentCard->getConnectedCard();
 
 				// If there is a card locking in the current card

@@ -50,9 +50,6 @@ std::string ArtificialPlayer::think()
 	}
 
 
-
-
-
 	// Check if a card on the board can move
 	{
 		int curColumn = 0;
@@ -75,7 +72,7 @@ std::string ArtificialPlayer::think()
 					if (board->canMove(card, movingColumn, *movingCard))
 					{
 						// If the card is king and it isn't in the bottom row
-						if (movingCard->getValue() == "KING" && row != 0)
+						if (movingCard->getValue() == "KING" && card.y != 0)
 						{
 							int i = 0;
 							do
@@ -105,17 +102,56 @@ std::string ArtificialPlayer::think()
 								// If the target value is one greater than moving card's value, and opposite colour
 								if (target->getValueNum() == movingCard->getValueNum() + 1 && target->getColour() != movingCard->getColour())
 								{
-									std::string command = "MOVE ";
-									command.append(std::to_string(curColumn));
-									return command;
+									int originalGreatness = 0;
+									int targetGreatness = 0;
+									bool hiddenCard = false;
+
+									// Check if the column it is joining is greater than the old column
+									while (hiddenCard == false && target != board->boardSlots[i].rend())
+									{
+										if (!target->isHidden())
+											targetGreatness++;
+										else
+											hiddenCard = true;
+
+										target++;
+									}
+									hiddenCard = false;
+
+									std::vector<Card>::reverse_iterator originalCol = board->boardSlots[curColumn].rbegin();
+									while (originalCol->getCardNum() != movingCard->getCardNum())
+									{
+										originalCol++;
+									}				
+									originalCol++;
+
+									while (hiddenCard == false && originalCol != board->boardSlots[curColumn].rend())
+									{
+										if (!originalCol->isHidden())
+											originalGreatness++;
+										else
+											hiddenCard = true;
+
+										originalCol++;
+									}
+
+									if (targetGreatness > originalGreatness)
+									{
+										std::string command = "MOVE ";
+										command.append(std::to_string(curColumn));
+										return command;
+									}
+
 								}
 							}
 						}
 						movingCard++;
+						card.y++;
 					}
 					else
 					{
 						movingCard++;
+						card.y++;
 					}
 				}
 			}
@@ -146,6 +182,8 @@ std::string ArtificialPlayer::think()
 		}
 	}
 
+
+	// No available moves, draw a new hand
 	return "DRAW";
 }
 
@@ -178,6 +216,15 @@ std::string ArtificialPlayer::getCommand()
 	// If the hand is empty, draw a card
 	if (board->hand.empty())
 		return "DRAW";
+
+	std::string command = think();
+	if (command == "DRAW")
+		drawCount++;
+	else
+		drawCount = 0;
+
+	if (drawCount > 10)
+		int i = 0;
 
 	return think();
 }

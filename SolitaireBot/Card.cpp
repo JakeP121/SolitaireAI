@@ -107,7 +107,12 @@ bool Card::isHidden()
 
 std::string Card::getColour()
 {
-	return colour;
+	if ((suit == "CLUBS") || (suit == "SPADES"))
+		return "BLACK";
+	else if ((suit == "DIAMONDS") || (suit == "HEARTS"))
+		return "RED";
+
+	//return colour;
 }
 
 Card* Card::getConnectedCard()

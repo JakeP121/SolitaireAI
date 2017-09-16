@@ -8,6 +8,7 @@ private:
 	Board *board;
 	std::string nextCommand;
 	std::string think();
+	int drawCount = 0;
 
 public:
 	ArtificialPlayer(Board *board);

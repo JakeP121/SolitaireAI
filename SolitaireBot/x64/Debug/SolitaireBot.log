@@ -1,8 +1,11 @@
 ﻿  ArtificialPlayer.cpp
 e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\artificialplayer.cpp(12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Generating Code...
-  Skipping... (no relevant changes detected)
+  Compiling...
   Source.cpp
+e:\documents\visual studio 2017\projects\solitaire%20bot\solitairebot\source.cpp(11): warning C4101: 'input': unreferenced local variable
+  Generating Code...
+  Skipping... (no relevant changes detected)
   Deck.cpp
   Card.cpp
   Board.cpp

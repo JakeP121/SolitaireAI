@@ -14,6 +14,7 @@ int main()
 	{
 		std::string command = myAI.getCommand();
 		myBoard.handle(command);
+		myBoard.printBoard();
 		Sleep(100);
 	} while (myBoard.isSet());
 
