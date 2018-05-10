@@ -1,18 +1,25 @@
 #include "Board.h"
 
+/// <summary>
+/// Creates a log file.
+/// </summary>
 Board::Board()
 {
 	// Creates a log file
 	logFile.open("log.txt");
-
 }
 
+/// <summary>
+/// Closes the log file.
+/// </summary>
 Board::~Board()
 {
 	logFile.close();
 }
 
-// Sets the board with fresh cards
+/// <summary>
+/// Sets the board with fresh cards
+/// </summary>
 void Board::setBoard()
 {
 	int cardsPerSlot = 1; // How many cards should be dealt into each column (start at 1, end at 7)
@@ -34,7 +41,9 @@ void Board::setBoard()
 	boardSet = true;
 }
 
-// Clears the board and resets the deck
+/// <summary>
+/// Clears the board and resets the deck
+/// </summary>
 void Board::clearBoard()
 {
 	if (!boardSet)
@@ -71,7 +80,9 @@ void Board::clearBoard()
 	boardSet = false;
 }
 
-// Tries to deal three cards from the deck to the hand
+/// <summary>
+/// Tries to deal three cards from the deck to the hand
+/// </summary>
 void Board::dealThree()
 {
 	if (!boardSet)
@@ -99,7 +110,9 @@ void Board::dealThree()
 	}
 }
 
-// Prints the current board to the console
+/// <summary>
+/// Prints the current board to the console
+/// </summary>
 void Board::printBoard()
 {
 	if (!boardSet)
@@ -257,7 +270,9 @@ void Board::printBoard()
 	std::cout << "\n\n  ";
 }
 
-// Prints the deck (debug)
+/// <summary>
+/// Prints the deck (debug)
+/// </summary>
 void Board::printDeck()
 {
 	while (deck.getSize() > 0)
@@ -270,6 +285,11 @@ void Board::printDeck()
 	}
 }
 
+/// <summary>
+/// Handles a command
+/// <summary>
+/// <param name="command">The input command that will be handled</param>
+/// <returns>0 if successfull, -1 if command is invalid</returns>
 int Board::handle(std::string command)
 {
 	if (command == "DRAW")
@@ -323,9 +343,14 @@ int Board::handle(std::string command)
 		move(movCard, std::stoi(val3));
 	}
 	else
-		return 1;
+		return -1;
 }
 
+/// <summary>
+/// Performs the deepest available move from a column
+/// <summary>
+/// <param name="column">The column to move the card(s) from</param>
+/// <returns>0 if successful, -1 if column is empty, -2 if no valid moves</returns>
 int Board::move(int column)
 {
 	point cardPos;
@@ -334,11 +359,11 @@ int Board::move(int column)
 	
 	// Return early if the column is empty
 	if (column <= 6 && boardSlots[column].empty())
-		return 1;
+		return -1;
 	else if ((column >= 7 && column <= 10) && suitSlots[column - 7].empty())
-		return 1;
+		return -1;
 	else if (column == 11 && hand.empty())
-		return 1;
+		return -1;
 
 	if (column <= 6 && boardSlots[column].size() >= 2)
 	{
@@ -362,7 +387,7 @@ int Board::move(int column)
 		} while (cardPos.y == -1);
 
 		if (cardPos.y == -1)
-			return 1;
+			return -2;
 	}
 
 	if (cardPos.y == -1)
@@ -372,7 +397,7 @@ int Board::move(int column)
 	Card movingCard;
 
 	if (!canMove(cardPos, movingColumn, movingCard))
-		return 1;
+		return -2;
 	
 	do
 	{
@@ -396,6 +421,12 @@ int Board::move(int column)
 	} while (column <= 6 && cardPos.y < boardSlots[column].size());
 }
 
+/// <summary>
+/// Performs the deepest available move from one column to another
+/// </summary>
+/// <param name="column">The column to move the card(s) from</param>
+/// <param name="destination">The column to move the card(s) to</param>
+/// <returns>0 if successful, -1 if column is invalid</param>
 int Board::move(int column, int destination)
 {
 	point cardPos;
@@ -409,7 +440,7 @@ int Board::move(int column, int destination)
 	else if (column == 11 && !hand.empty())
 		cardPos.y = hand.size() - 1;
 	else
-		return 1;
+		return -1;
 
 	// Find what row the card is in
 	if (column <= 6)
@@ -422,9 +453,15 @@ int Board::move(int column, int destination)
 	return move(cardPos, destination);
 }
 
+/// <summary>
+/// Moves a specific card and all its connected cards to a destination column
+/// </summary>
+/// <param name="card">The x and y coordinates of the moving card</param>
+/// <param name="destination>The column to move the card(s) to</param>
+/// <returns>0 if successful, -1 if card invalid, -2 if destination is invalid, -3 if move is against the rules</param>
 int Board::move(point card, int destination)
 {
-	antiGarbage();
+	resetConnectedCards();
 
 	// Column 0-6 (columns), 7-10 (suit piles), 11 (hand)
 	int column = card.x;
@@ -433,15 +470,15 @@ int Board::move(point card, int destination)
 	////////////////////////////////////////////////////////////////////////////////////////// Column Check
 	// If column is out of range, end early
 	if (column < 0 || column > 12)
-		return 1;
+		return -1;
 
 	// If the column is one of the board slots, and the row is greater than the slot's size, end early
 	if (column <= 6 && row > boardSlots[column].size())
-		return 1;
+		return -1;
 
 	////////////////////////////////////////////////////////////////////////////////////////// Destination check
 	if (destination < 0 || destination > 10)
-		return 1;
+		return -2;
 
 
 	////////////////////////////////////////////////////////////////////////////////////////// Check moving card itself
@@ -450,7 +487,7 @@ int Board::move(point card, int destination)
 
 	////////////////////////////////////////////////////////////////////////////////////////// Check if card is locked
 	if (!canMove(card, movingColumn, movingCard))
-		return 1;
+		return -1;
 
 
 	////////////////////////////////////////////////////////////////////////////////////////// Check if destination is valid
@@ -465,14 +502,14 @@ int Board::move(point card, int destination)
 			// If the target and moving cards are the same colour, or the target card value isn't moving card - 1
 			if (targetCard.getColour() == movingCard.getColour() || movingCard.getValueNum() != targetCard.getValueNum() - 1)
 			{
-				return 1;
+				return -3;
 			}
 		}
 		else
 		{
 			// Only let a king move to an empty space
 			if (movingCard.getValue() != "KING")
-				return 1;
+				return -3;
 		}
 	}
 	else	// Destination must be a suit slot
@@ -481,20 +518,20 @@ int Board::move(point card, int destination)
 
 		// If trying to move a column to a suit slot, end early
 		if (movingColumn.size() > 1)
-			return 1;
+			return -2;
 
 		// If the slot isn't empty
 		if (!suitSlots[suitSlotNum].empty())
 		{
 			// If the card isn't the same suit as this slot or the value isn't one more than the top card
 			if ((movingCard.getSuit() != suitSlots[suitSlotNum].top().getSuit()) || (movingCard.getValueNum() != suitSlots[suitSlotNum].top().getValueNum() + 1))
-				return 1; // End early
+				return -3; // End early
 		}
 		else
 		{
 			// If the card is not an ace, end early
 			if (movingCard.getValue() != "ACE")
-				return 1;
+				return -3;
 		}
 	}
 
@@ -505,7 +542,7 @@ int Board::move(point card, int destination)
 	if (destination <= 6) // Moving to board slot
 	{
 		if (movingCard.getValue() == "KING" && card.y == 0 && destination > card.x)
-			return 1;
+			return -3;
 
 		// Remember target's row
 		int targetRow = boardSlots[destination].size() - 1;
@@ -584,11 +621,22 @@ int Board::move(point card, int destination)
 	return 0;
 }
 
+/// <summary>
+/// Gets whether or not a board is set and ready to play
+/// </summary>
+/// <returns>true if set, else false</returns>
 bool Board::isSet()
 {
 	return boardSet;
 }
 
+/// <summary>
+/// Gets whether or not a card is free to move
+/// </summary>
+/// <param name="card">The moving card's coordinates on the board</param>
+/// <param name="movingColumn">The column the card is moving from</param>
+/// <param name="movingCard>The moving card itself</param>
+/// <returns>true if move available, else false</returns>
 bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCard)
 {
 	int column = card.x;
@@ -620,7 +668,7 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 
 			do
 			{
-				antiGarbage();
+				resetConnectedCards();
 				Card *lockingCard = currentCard->getConnectedCard();
 
 				// If there is a card locking in the current card
@@ -670,6 +718,10 @@ bool Board::canMove(point card, std::vector<Card> &movingColumn, Card &movingCar
 	return true;
 }
 
+/// <summary>
+/// Checks whether the game is complete
+/// </summary>
+/// <returns>true if game is complete, else false</returns>
 bool Board::checkGameComplete()
 {
 	for (int i = 0; i < 4; i++)
@@ -678,16 +730,22 @@ bool Board::checkGameComplete()
 			return false;
 	}
 
-	std::cout << "\n\n\tCongratulation!\n\n";
+	std::cout << "\n\n\tCongratulations!\n\n";
 	std::cin;
 	boardSet = false;
 	return true;
 }
 
-void Board::antiGarbage()
+/// <summary>
+/// Iterates through all cards on the board and resets their connectedCard to the correct card.
+///
+/// Somewhere in this project, cards are forgetting their connectedCard, causing an exception to be thrown when trying to access it. Temporary fix.
+/// </summary>
+void Board::resetConnectedCards()
 {
 	std::vector<Card>::iterator iter;
 	std::vector<Card>::iterator iter2;
+
 	for (int i = 0; i < 7; i++)
 	{
 		if (!boardSlots[i].empty())

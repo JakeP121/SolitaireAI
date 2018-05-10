@@ -1,5 +1,25 @@
 #include "ArtificialPlayer.h"
 
+/// <summary>
+/// Starts a new game if the board has not been set
+/// </summary>
+/// <param name="board">The game board</param>
+ArtificialPlayer::ArtificialPlayer(Board *board)
+{
+	this->board = board;
+
+	// If the board is not set, start a new game
+	if (!board->isSet())
+		nextCommand = "NEWGAME";
+	else
+		nextCommand = "NULL";
+}
+
+/// <summary>
+/// Decides what move to play next.
+/// (called by getCommand()).
+/// </summary>
+/// <returns>A command for the board</returns>
 std::string ArtificialPlayer::think()
 {
 	// Check if any cards can move into the suit slots
@@ -187,22 +207,19 @@ std::string ArtificialPlayer::think()
 	return "DRAW";
 }
 
-ArtificialPlayer::ArtificialPlayer(Board *board)
-{
-	this->board = board;
-	
-	// If the board is not set, start a new game
-	if (!board->isSet())
-		nextCommand = "NEWGAME";
-	else
-		nextCommand = "NULL";
-}
-
+/// <summary>
+/// Returns the command to start a new game
+/// </summary>
+/// <returns>The command "NEWGAME"</returns>
 std::string ArtificialPlayer::startNewGame()
 {
 	return "NEWGAME";
 }
 
+/// <summary>
+/// Gets a command to play to give to the game board.
+/// </summary>
+/// <returns>A valid command</returns>
 std::string ArtificialPlayer::getCommand()
 {
 	// If a command has been set by another function, use that command
@@ -223,8 +240,11 @@ std::string ArtificialPlayer::getCommand()
 	else
 		drawCount = 0;
 
-	if (drawCount > 10)
-		std::cout << "\n\n\tBoard Impossible\n\n";
+	if (drawCount > 10) // Give up after 10 unsuccessful draws
+	{
+		std::cout << "\n\n\tNo solution found :(\n\n";
+		return "EXIT";
+	}
 
 	return think();
 }

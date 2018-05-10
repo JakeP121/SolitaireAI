@@ -11,12 +11,12 @@
 class Board
 {
 private:
-	std::ofstream logFile;
-	bool boardSet = false;
+	std::ofstream logFile; // A log file containing the game's moves
+	bool boardSet = false; // True if a game is ready to be played
 	void setBoard();	// Shuffle the deck and set the board
 	void clearBoard();	// Clear the board and sort the deck
 	void dealThree();	// Deal three cards into the hand
-	void antiGarbage();	// Makes sure every card that is connected, has a pointer to it's connected card
+	void resetConnectedCards();	// Makes sure every card that is connected, has a pointer to it's connected card
 	bool checkGameComplete();	// Checks if the game is completed
 	
 	int move(int column);	// Moves card from top of column to any first acceptable slot (suit slots prioritised)
@@ -26,10 +26,10 @@ private:
 	
 
 public:
-	std::array<std::vector<Card>, 7> boardSlots;
-	std::array<std::stack<Card>, 4> suitSlots;
-	std::stack<Card> hand;
-	Deck deck;
+	std::array<std::vector<Card>, 7> boardSlots; // The seven columns cards are placed into
+	std::array<std::stack<Card>, 4> suitSlots;	 // The four suit-specific slots 
+	std::stack<Card> hand;						 // The cards currently available to place onto the board
+	Deck deck;									 // Face down cards in the deck
 
 	Board();			// Opens the logFile for writing
 	~Board();			// Saves and closes the logFile

@@ -6,7 +6,9 @@ Deck::Deck()
 	createDeck();
 }
 
-// Creates a new deck, ordered.
+/// <summary>
+/// Creates a new ordered deck
+/// </summary>
 void Deck::createDeck()
 {
 	// Clear the cards vector
@@ -24,7 +26,11 @@ void Deck::createDeck()
 	}
 }
 
-// Swaps the position of two cards in the deck
+/// <summary>
+/// Swaps the position of two cards in the deck
+/// </summary>
+/// <param name="cardOne">The first card to swap</param>
+/// <param name="cardTwo">The second card to swap</param>
 void Deck::swapCardPositions(Card &cardOne, Card &cardTwo)
 {
 	Card tempCard = cardOne;	// Store cardOne in tempCard
@@ -32,14 +38,18 @@ void Deck::swapCardPositions(Card &cardOne, Card &cardTwo)
 	cardTwo = tempCard;			// Store tempCard in cardTwo
 }
 
-// Creates a fresh deck
+/// <summary>
+/// Sorts the deck
+/// </summary>
 void Deck::sortDeck()
 {
 	createDeck();
 }
 
-// Shuffles the deck.
-// <param>rounds: the amount of times the deck should be shuffled</param>
+/// <summary>
+/// Shuffles the deck randomly.
+/// </summary>
+/// <param name="rounds">The amount of times the deck should be shuffled</param>
 void Deck::shuffleDeck(int rounds)
 {	
 	while (rounds > 0)
@@ -58,8 +68,10 @@ void Deck::shuffleDeck(int rounds)
 	}
 }
 
-// Returns a card from the deck
-// <param>dealFaceDown: decides whether the card should be hidden when dealt</param>
+/// <summary>
+/// Returns a card from the deck
+/// </summary>
+/// <param name="dealFaceDown">Whether the card should be hidden when dealt</param>
 Card Deck::dealCard(bool dealFaceDown)
 {
 	// Move iterator to last card
@@ -79,13 +91,19 @@ Card Deck::dealCard(bool dealFaceDown)
 	return returnCard;
 }
 
-// Returns the amount of cards left in the deck
+/// <summary>
+/// Returns the amount of cards left in the deck
+/// </summary>
+/// <returns>The number of cards in the deck</returns>
 int Deck::getSize()
 {
 	return cards.size();
 }
 
-// Adds card to the deck
+/// <summary>
+/// Adds card to the deck
+/// </summary>
+/// <param name="card">The card to add</card>
 void Deck::addCard(Card card)
 {
 	cards.push_back(card);

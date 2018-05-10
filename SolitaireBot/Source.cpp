@@ -3,24 +3,45 @@
 #include "ArtificialPlayer.h"
 #include <Windows.h>
 
-int main()
+/// <summary>
+/// Runs a game of solitaire with AI input
+/// </summary>
+/// <param name="gameBoard">The solitaire game that is going to be played</param>
+void runAI(Board *gameBoard)
 {
-	Board myBoard;
-	ArtificialPlayer myAI(&myBoard);
+	ArtificialPlayer myAI(gameBoard);
 
-	char input[20];
+	char input[20]; // Input buffer
+
+	gameBoard->printBoard();
+	Sleep(10);
 
 	do
 	{
+		gameBoard->printBoard();
+
 		std::string command = myAI.getCommand();
-		myBoard.handle(command);
-		myBoard.printBoard();
-		Sleep(100);
-	} while (myBoard.isSet());
 
+		if (command == "EXIT")
+			return;
 
-	
-	/*		HUMAN CONTROL
+		gameBoard->handle(command);
+		std::cout << "\tAI says: " << command << "\n";
+		
+		Sleep(500);
+	} while (gameBoard->isSet());
+}
+
+/// <summary>
+/// Runs a game of solitaire with human input
+/// </summary>
+/// <param name="gameBoard">The solitaire game that is going to be played</param>
+void runHuman(Board *gameBoard)
+{
+	ArtificialPlayer myAI(gameBoard);
+
+	char input[20]; // Input buffer
+
 	while (true)
 	{
 		std::cin.getline(input, sizeof(input));
@@ -31,17 +52,25 @@ int main()
 		std::string command = input;
 
 		if (command == "EXIT")
-			return 0;
-		else if (command == "BREAK")
-			myBoard.printBoard();
+			return;
 		else
 		{
-			myBoard.handle(command);
+			gameBoard->handle(command);
 			system("cls");
-			myBoard.printBoard();
+			gameBoard->printBoard();
 		}
 	}
-	*/
+}
 
+
+
+int main()
+{
+	Board myBoard; // Solitaire board
+
+	runAI(&myBoard);
+	//runHuman(&myBoard);
+
+	Sleep(5000); // Wait 5 seconds
 	return 0;
 }
